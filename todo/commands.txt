@@ -1,0 +1,35 @@
+python3 -m venv venv 
+.venv/bin/activate
+
+pip install Django
+pip install djangorestframework
+
+django-admin startproject project_name(config|main) .
+django-admin startapp name_app | python3 manage.py startapp name_app
+
+config.settings ----> INSTALLED_APPS =[
+    ...
+    ...
+    ...
+    ...
+
+    #apps
+    'name_app'
+]
+
+
+
+namee_app.models ---> write struct subject
+from Django.db import models
+
+class CustomClassName(models.Model):
+    id = default(Primary key, index)
+    ...
+    name_field = models.TypeClass()
+
+python3 manage.py makemigrations (name_app"необязательно, по умолчанию закинет все приложение  в INSTALLED_APPS)  (1 шаг, как слепок)
+
+python3 manage.py migrate (name_app"необязательно, по умолчанию закинет все приложение  в INSTALLED_APPS)  (2 шаг как пуш)
+
+python3 manage.py runserver (default 8000 port)
+
