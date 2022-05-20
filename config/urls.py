@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from todo.views import new_list, NewsList
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/v1/news/', NewsList.as_view())
 ]

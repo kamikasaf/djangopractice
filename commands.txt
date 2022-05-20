@@ -16,6 +16,7 @@ config.settings ----> INSTALLED_APPS =[
     #apps
     'name_app'
 ]
+создать БД для проектра, настроить settings {DATABASE}
 
 
 
@@ -33,3 +34,129 @@ python3 manage.py migrate (name_app"необязательно, по умолч�
 
 python3 manage.py runserver (default 8000 port)
 
+
+python3 manage.py createsuperuser - создание супер юзера для входа в БД
+
+
+
+News.objects.all()              # получение общего списка | SELECT * FROM news;
+News.objects.only('title')      # получение по полям | SELECT title FROM news
+News.objects.defer('title')     # получение всех полей кроме title 
+News.objects.filter(условие)    # получение по какому то условию | SELECT * FROM news WHERE условие
+
+
+"""Сравнение
+News.objects.filter(author_id = 1)   |   SELECT * FROM news WHERE author = 1
+
+News.objects.filter(~Q(author_id = 1))   |   SELECT * FROM news WHERE NOT author = 1
+
+News.objects.filter(create_date__gt = 2022, 08, 09, 18, 51, 29, 0009)    |    SELECT * FROM news WHERE create_date > ...;
+
+News.objects.filter(create_date__lt = ...)      |       SELECT * FROM news WHERE create_date < ...;
+
+News.objects.filter(create_date__gte = ...)      |       SELECT * FROM news WHERE create_date >= ...;
+
+News.objects.filter(create_date__lte = ...)      |       SELECT * FROM news WHERE create_date <= ...;
+
+News.objects.filter(create_date_gte = begin_date).filter(create_date__lte=end_date)  |  
+News.objects.filter(create_date_gte = begin_date, create_date__lte=end_date)     |     SELECT * FROM news WHERE create_date >= begin_date AND create_date <= end_date;
+News.objects.filter(create_date__range = (begin_date, end_date))    |   SELECT * FROM news WHERE create BETWEEN begin_date AND end_date;
+
+LIKE, ILIKE
+# строка строго равна ...
+word = 'Hello'
+News.objects.filter(title = 'Hello')
+SELECT * FROM news WHERE title = 'Hello'
+
+News.objects.filter(title__exact='')                # чувствителен к регистру
+SELECT * FROM news WHERE title LIKE 'Hello'
+News.objects.filter(title__iexact='')               # нечувствителен к регистру
+SELECT * FROM news WHERE title ILIKE 'Hello'
+
+#строка начинается с ...
+News.objects.filter(title__statswith='Hello')
+News.objects.filter(title__istatswith='Hello')
+SELECT * FROM news WHERE title LIKE 'Hello%'
+
+#строка заканчивается на ...
+News.objects.filter(title__endwith='Hello')
+News.objects.filter(title__iednswith='Hello')
+SELECT * FROM news WHERE title LIKE '%Hello'
+
+#строка содержит ...
+News.objects.filter(title__contains='Hello')
+News.objects.filter(title__icontains='Hello')
+SELECT * FROM news WHERE title LIKE '%Hello%'
+
+
+News.objects.filter(author_id__in=[1,2,3,4])
+SELECT * FROM news WHERE author_id IN (1,2,3,4)
+
+#получение одного обьекта 
+News.objects.get(id=1)
+SELECT * FROM news WHERE id = 1;
+
+#получение определенного количества 
+Queryset (список из объектов модели)
+News.objects.all()[:5]
+SELECT * FROM news LIMIT 5;
+
+#ORDER BY сортировка
+
+News.objects.order_by('create_date')            #по возрастанию
+SELECT * FROM news ORDER BY create_date ASC;
+
+News.objects.order_by('-create_date')           #по убыванию
+SELECT * FROM news ORDER BY create_date DESC;
+
+
+
+#порядок
+News.objects.filter().order_by().only()[:6]
+
+News.objects.count()
+SELECT COUNT(*) FROM news;
+
+News.objects.filter().count()
+
+SELECT COUNT() FROM news WHERE ...;
+
+
+#INSERT - добавление
+
+n1 = News(title=..., desc= ...., ...)
+n1.save()
+
+n2 = News.objects.create(title=..., desc = ..., ...)
+
+News.objects.bulk_create(
+    News(title=..., desc= ...., ...),
+    News(title=..., desc= ...., ...),
+    News(title=..., desc= ...., ...)
+)
+INSERT INTO news (fields) VALUES (...), (...), (...)
+
+#UPDATE
+News.objects.update(title = '123')
+UPDATE news SET title = '123';
+
+News.objects.filter(id=2).update(title = '123')
+n1 = News.objects.get(id=2)
+n1.title = '123'
+n1.save()
+
+UPDATE news SET title = '123' WHERE id = 2;
+
+News.objects.filter(create_date__gt = ...).update(title = '123')
+UPDATE news SET title = '123' WHERE create_date > ....;
+
+
+#DELETE
+News.objects.delete()    удаление всех записей
+DELETE FROM news;
+
+News.objects.filter().delete()
+DELETE FROM news WHERE ...;
+
+n1 = News.objects.get(id=2)
+n1.delete()
